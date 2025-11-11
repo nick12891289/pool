@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pipe Volume Calculator</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .calculator-container {
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 25px 30px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 18px;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 6px;
+        }
+
+        .input-group select,
+        .input-group input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .imperial-inputs {
+            display: flex;
+            gap: 10px;
+        }
+
+        .imperial-inputs div {
+            flex: 1;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #results {
+            margin-top: 25px;
+            background: #f9f9f9;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            padding: 15px;
+        }
+
+        #results p {
+            margin: 8px 0;
+            font-size: 1.1em;
+            color: #333;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        #results span {
+            font-weight: 700;
+            color: #000;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="calculator-container">
+        <h2>Pipe Volume Calculator</h2>
+
+        <div class="input-group">
+            <label for="pipeSize">Plumbing Size</label>
+            <select id="pipeSize">
+                <option value="1.590">1.5"</option>
+                <option value="2.047">2.0"</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label for="unitSystem">Length Units</label>
+            <select id="unitSystem">
+                <option value="imperial">Feet</option>
+                <option value="metric">Meters</option>
+            </select>
+        </div>
+
+        <div id="imperialInputs" class="input-group">
+            <div class="imperial-inputs">
+                <div>
+                    <label for="feet">Feet</label>
+                    <input type="number" id="feet" min="0" value="0">
+                </div>
+            </div>
+        </div>
+
+        <div id="metricInputs" class="input-group" style="display:none;">
+            <label for="meters">Meters</label>
+            <input type="number" id="meters" min="0" value="0">
+        </div>
+
+        <button id="calculateBtn">Calculate Volume</button>
+
+        <div id="results">
+            <p>Volume (Cubic Inches): <span id="volumeInches">--</span></p>
+            <p>Volume (Liters): <span id="volumeLiters">--</span></p>
+            <p>Volume (Gallons): <span id="volumeGallons">--</span></p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            const unitSystemSelect = document.getElementById('unitSystem');
+            const imperialInputs = document.getElementById('imperialInputs');
+            const metricInputs = document.getElementById('metricInputs');
+            const calculateBtn = document.getElementById('calculateBtn');
+
+            unitSystemSelect.addEventListener('change', function () {
+                if (this.value === 'metric') {
+                    imperialInputs.style.display = 'none';
+                    metricInputs.style.display = 'block';
+                } else {
+                    imperialInputs.style.display = 'block';
+                    metricInputs.style.display = 'none';
+                }
+            });
+
+            calculateBtn.addEventListener('click', function () {
+                const internalDiameter = parseFloat(document.getElementById('pipeSize').value);
+                const radius = internalDiameter / 2;
+
+                let totalLengthInches = 0;
+                const selectedUnit = unitSystemSelect.value;
+
+                if (selectedUnit === 'imperial') {
+                    const feet = parseFloat(document.getElementById('feet').value) || 0;
+                    totalLengthInches = (feet * 12);
+                } else {
+                    const meters = parseFloat(document.getElementById('meters').value) || 0;
+                    totalLengthInches = meters * 39.3701;
+                }
+
+                const volumeCubicInches = Math.PI * Math.pow(radius, 2) * totalLengthInches;
+
+                const volumeLiters = volumeCubicInches / 61.0237;
+
+                const volumeGallons = volumeCubicInches / 231;
+
+                document.getElementById('volumeInches').textContent = volumeCubicInches.toFixed(2);
+                document.getElementById('volumeLiters').textContent = volumeLiters.toFixed(2);
+                document.getElementById('volumeGallons').textContent = volumeGallons.toFixed(3);
+            });
+        });
+    </script>
+
+</body>
+
+</html>
